@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <h1></h1>
+    <% if (username) { %>
+      <p>Welcome back <%= username %></p>
+      <p><%= token %></p>
+      <a href="/api/logout">Log out</a>
+    <% } else { %>
+      <p>Not logged in.</p>
+      <a href="/api/login">Log in</a>
+    <% } %>
   </body>
 </html>

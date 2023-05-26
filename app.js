@@ -7,7 +7,6 @@ var logger = require("morgan");
 const cors = require("cors");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 // PASSPORT STUFF
 const passport = require("passport");
@@ -17,6 +16,8 @@ const ExtractJWT = require("passport-jwt").ExtractJwt;
 
 var indexRouter = require("./routes/index");
 var apiRouter = require("./routes/api");
+
+const User = require("./models/user");
 
 // Connect to MongoDB
 async function main() {
@@ -46,6 +47,46 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Define the "login" strategy
+passport.use(
+  "login",
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      // Logic for verifying the username and password
+      // You can use the "User" model to perform the authentication
+      const user = await User.findOne({ username });
+      if (!user) {
+        return done(null, false, { message: "Invalid username" });
+      }
+
+      if (password !== user.password) {
+        return done(null, false, { message: "Invalid password" });
+      }
+
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  })
+);
+
+passport.use(
+  new JWTstrategy(
+    {
+      secretOrKey: "parrot",
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    },
+    async (token, done) => {
+      try {
+        return done(null, token.user);
+      } catch (error) {
+        done(error);
+      }
+    }
+  )
+);
+
+app.use(passport.initialize());
 app.use("/", indexRouter);
 app.use("/api", apiRouter);
 
