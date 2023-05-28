@@ -53,7 +53,6 @@ passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       // Logic for verifying the username and password
-      // You can use the "User" model to perform the authentication
       const user = await User.findOne({ username });
       if (!user) {
         return done(null, false, { message: "Invalid username" });
@@ -70,11 +69,17 @@ passport.use(
   })
 );
 
+// HARD CODED TOKEN FOR TEST
+function getToken() {
+  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0NmY3NGYzNzlhNTdhMzllMzBlM2UyZSIsInVzZXJuYW1lIjoiY2F0IiwicGFzc3dvcmQiOiJxcXEifSwiaWF0IjoxNjg1MjY3MzI0fQ.MUOesSXrknsz1fIqpjINBjS5YWJf_tInPGAT_pQGUmY";
+}
+
 passport.use(
   new JWTstrategy(
     {
-      secretOrKey: "parrot",
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "secret",
+      jwtFromRequest: getToken, // Test token
+      // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async (token, done) => {
       try {

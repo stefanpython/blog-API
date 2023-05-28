@@ -1,3 +1,46 @@
+const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+// Create a new user
+exports.signup = async (req, res) => {
+  const { username, password } = req.body;
+  console.log(username, password);
+  try {
+    // Check if the username already exists
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
+    // Create a new user instance
+    const newUser = new User({ username, password });
+
+    // Save the user to the database
+    const savedUser = await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: savedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// User login
+exports.login = (req, res) => {
+  // TODO: Implement logic for user login
+  res.json({ message: "TODO LOGIN" });
+};
+
+// User logout
+exports.logout = (req, res) => {
+  // TODO: Implement logic for user logout
+  res.json({ message: "TODO LOG OUT" });
+};
+
 // const User = require("../models/user");
 // const passport = require("passport");
 // const jwt = require("jsonwebtoken");
