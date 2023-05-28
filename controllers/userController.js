@@ -6,7 +6,7 @@ const User = require("../models/user");
 // Create a new user
 exports.signup = async (req, res) => {
   const { username, password } = req.body;
-  console.log(username, password);
+
   try {
     // Check if the username already exists
     const existingUser = await User.findOne({ username });
@@ -15,8 +15,11 @@ exports.signup = async (req, res) => {
       return res.status(409).json({ message: "Username already exists" });
     }
 
-    // Create a new user instance
-    const newUser = new User({ username, password });
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user instance with the hashed password
+    const newUser = new User({ username, password: hashedPassword });
 
     // Save the user to the database
     const savedUser = await newUser.save();

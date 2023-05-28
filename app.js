@@ -7,6 +7,7 @@ var logger = require("morgan");
 const cors = require("cors");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // PASSPORT STUFF
 const passport = require("passport");
@@ -58,7 +59,8 @@ passport.use(
         return done(null, false, { message: "Invalid username" });
       }
 
-      if (password !== user.password) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
         return done(null, false, { message: "Invalid password" });
       }
 
