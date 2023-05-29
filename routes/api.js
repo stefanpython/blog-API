@@ -14,14 +14,10 @@ router.get("/", function (req, res, next) {
   res.redirect("/api/posts");
 });
 
-// POST CONTROLLER
+/////////// POST CONTROLLER //////////////////////
 
 // read/get all posts - api/posts
-router.get(
-  "/posts",
-  passport.authenticate("jwt", { session: false }),
-  post_controller.post_list
-);
+router.get("/posts", post_controller.post_list);
 
 // create post - api/posts
 router.post(
@@ -31,11 +27,7 @@ router.post(
 );
 
 // read/get post - api/posts/:id
-router.get(
-  "/posts/:id",
-  passport.authenticate("jwt", { session: false }),
-  post_controller.post_detail
-);
+router.get("/posts/:id", post_controller.post_detail);
 
 // update post - api/posts/:postid
 router.put(
@@ -51,7 +43,7 @@ router.delete(
   post_controller.post_delete
 );
 
-// COMMENT ROUTES
+/////////////////////// COMMENT ROUTES ////////////////////////////////
 
 // create comment - api/posts/:postid/comments
 router.post("/posts/:postid/comments", comment_controller.comment_create);
@@ -74,7 +66,7 @@ router.delete(
   comment_controller.comment_delete
 );
 
-// USER CONTROLLER
+/////////////////////////////// USER CONTROLLER ///////////////////////////
 
 // create author - api/signup
 router.post("/sign-up", user_controller.signup);

@@ -1,10 +1,38 @@
-const { validationResult } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const Comment = require("../models/comment");
+const Post = require("../models/post");
+const mongoose = require("mongoose");
 
 // Create a comment
-exports.comment_create = (req, res) => {
-  // TODO: Implement logic to create a comment
-  res.json({ message: "TODO CREATE COMMENT" });
+exports.comment_create = async (req, res) => {
+  try {
+    // Destructure the comment content and post ID from the request body
+    const { content, user } = req.body;
+    const postId = req.params.postid;
+
+    // Check if the post ID is valid
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Create a new comment instance
+    const newComment = new Comment({
+      content: content,
+      postId: postId,
+      user: user, // Assuming you have a user object in the request
+    });
+
+    // Save the new comment to the database
+    const savedComment = await newComment.save();
+
+    res.json({
+      message: "Comment created successfully",
+      comment: savedComment,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error creating comment" });
+  }
 };
 
 // Get a single comment
