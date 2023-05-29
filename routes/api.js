@@ -58,11 +58,16 @@ router.get(
 );
 
 // DELETE ALL POST COMMENTS
-router.delete("/posts/:postid/comments", comment_controller.comment_delete_all);
+router.delete(
+  "/posts/:postid/comments",
+  passport.authenticate("jwt", { session: false }),
+  comment_controller.comment_delete_all
+);
 
 // delete comment - api/posts/:postid/comments/:commentid
 router.delete(
   "/posts/:postid/comments/:commentid",
+  passport.authenticate("jwt", { session: false }),
   comment_controller.comment_delete
 );
 

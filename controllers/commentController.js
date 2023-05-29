@@ -99,7 +99,20 @@ exports.comment_delete = async (req, res, next) => {
 };
 
 // Delete all comments of a post
-exports.comment_delete_all = (req, res) => {
-  // TODO: Implement logic to delete all comments of a post
-  res.json({ message: "TODO DELETE ALL COMMENTS" });
+exports.comment_delete_all = async (req, res, next) => {
+  try {
+    const postId = req.params.postid;
+
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Find and remove all comments with the matching postId
+    await Comment.deleteMany({ postId: postId });
+
+    res.json({ message: "Comments deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
 };
