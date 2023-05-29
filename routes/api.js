@@ -7,49 +7,6 @@ const comment_controller = require("../controllers/commentController");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-// TODO: - create normal sing-up router
-//       - create login router and also create token inside this route
-//       - create logout
-
-////////////////////// END ///////////////////////////
-
-// const fs = require("fs");
-// const localToken = require("../localToken.json");
-
-// router.get("/createtoken", async (req, res) => {
-//   const user = await User.findOne();
-
-//   const token = jwt.sign({ user: user }, "secret");
-
-//   console.log("token:", token);
-
-//   await fs.writeFile(
-//     "token.json",
-//     JSON.stringify({ Authorization: `Bearer ${token}` }),
-//     (err) => {
-//       if (err) throw err;
-//       console.log("Updated token file");
-//     }
-//   );
-
-//   res.send("Create token");
-// });
-
-// router.get(
-//   "/messages",
-//   passport.authenticate("jwt", { session: false }),
-//   async (req, res) => {
-//     console.log("Authorization token: ", localToken.Authorization);
-
-//     // const result = await jwt.verify(
-//     //   localToken.Authorization.substring(7),
-//     //   "secret"
-//     // );
-
-//     res.json({ message: "Authenticated" });
-//   }
-// );
-
 ///////////////// ROUTES /////////////////////////
 
 /* index route*/
@@ -74,7 +31,11 @@ router.post(
 );
 
 // read/get post - api/posts/:id
-router.get("/posts/:id", post_controller.post_detail);
+router.get(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  post_controller.post_detail
+);
 
 // update post - api/posts/:postid
 router.put("/posts/:id", post_controller.post_update);

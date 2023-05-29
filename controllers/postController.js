@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
+const mongoose = require("mongoose");
 
 // Get all posts
 exports.post_list = async (req, res) => {
@@ -37,9 +38,29 @@ exports.post_create = async (req, res) => {
 };
 
 // Get a single post
-exports.post_detail = (req, res) => {
-  // TODO: Implement logic to get a single post
-  res.json({ message: "TODO READ A SINGLE POST" });
+exports.post_detail = async (req, res) => {
+  try {
+    // Request post id from params
+    const postId = req.params.id;
+
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Find post with the valid id
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      // If the post is null, return the "Post not found" message
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Send the retrieved post as the response
+    res.json({ post });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // Update a post
