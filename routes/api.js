@@ -67,7 +67,11 @@ router.get(
 );
 
 // create post - api/posts
-router.post("/posts", post_controller.post_create);
+router.post(
+  "/posts",
+  passport.authenticate("jwt", { session: false }),
+  post_controller.post_create
+);
 
 // read/get post - api/posts/:id
 router.get("/posts/:id", post_controller.post_detail);
