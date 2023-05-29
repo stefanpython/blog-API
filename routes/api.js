@@ -45,7 +45,11 @@ router.put(
 );
 
 // delete post - api/posts/:postid
-router.delete("/posts/:id", post_controller.post_delete);
+router.delete(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  post_controller.post_delete
+);
 
 // COMMENT ROUTES
 

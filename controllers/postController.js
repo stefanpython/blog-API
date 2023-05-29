@@ -113,7 +113,18 @@ exports.post_update = [
 ];
 
 // Delete a post
-exports.post_delete = (req, res) => {
-  // TODO: Implement logic to delete a post
-  res.json({ message: "TODO DELETE POST" });
+exports.post_delete = async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    await Post.findByIdAndRemove(postId);
+    res.json({ message: "Deleted post successfuly" });
+  } catch (err) {
+    next(err);
+  }
 };
