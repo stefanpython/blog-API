@@ -80,14 +80,26 @@ exports.comment_list = async (req, res, next) => {
   }
 };
 
+// Delete a comment
+exports.comment_delete = async (req, res, next) => {
+  try {
+    const commentId = req.params.commentid;
+
+    // Check if id is valid
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    await Comment.findByIdAndRemove(commentId);
+
+    res.json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Delete all comments of a post
 exports.comment_delete_all = (req, res) => {
   // TODO: Implement logic to delete all comments of a post
   res.json({ message: "TODO DELETE ALL COMMENTS" });
-};
-
-// Delete a comment
-exports.comment_delete = (req, res) => {
-  // TODO: Implement logic to delete a comment
-  res.json({ message: "TODO DELETE A SINGLE COMMENT" });
 };
