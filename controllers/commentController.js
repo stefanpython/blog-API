@@ -36,9 +36,23 @@ exports.comment_create = async (req, res) => {
 };
 
 // Get a single comment
-exports.comment_detail = (req, res) => {
-  // TODO: Implement logic to get a single comment
-  res.json({ message: "TODO READ SINGLE COMMENT" });
+exports.comment_detail = async (req, res) => {
+  try {
+    // Retrieve the comment ID from the request parameters
+    const commentId = req.params.commentid;
+
+    // TODO: Implement logic to find the comment by ID
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Return the retrieved comment as the response
+    res.json({ comment });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // Get all comments
