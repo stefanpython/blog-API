@@ -2,9 +2,16 @@ const { validationResult } = require("express-validator");
 const Post = require("../models/post");
 
 // Get all posts
-exports.post_list = (req, res) => {
-  // TODO: Implement logic to get all posts
-  res.json({ message: "TODO SEE ALL POSTS" });
+exports.post_list = async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const posts = await Post.find({});
+
+    res.json({ message: "Success", posts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error retrieving posts" });
+  }
 };
 
 // Create a new post

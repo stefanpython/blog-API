@@ -33,62 +33,32 @@ exports.signup = async (req, res) => {
 };
 
 // User login
-exports.login = (req, res) => {
-  // TODO: Implement logic for user login
-  res.json({ message: "TODO LOGIN" });
+exports.login = async (req, res) => {
+  const { username, password } = req.body;
+  console.log(username, password);
+  try {
+    // Find the user in the database
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPassword = await bcrypt.compare(password, user.password);
+    if (!isPassword) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ userId: user.id }, "secret", { expiresIn: "2h" });
+    res.json({ message: "Login successful", token });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-// User logout
-exports.logout = (req, res) => {
-  // TODO: Implement logic for user logout
-  res.json({ message: "TODO LOG OUT" });
+/// User logout
+exports.logout = (req, res, next) => {
+  res.json({ message: "Logout successful" });
 };
-
-// const User = require("../models/user");
-// const passport = require("passport");
-// const jwt = require("jsonwebtoken");
-// const { validationResult } = require("express-validator");
-
-// exports.login_get = async (req, res) => {
-//   const errors = validationResult(req);
-//   res.render("login", {
-//     title: "Login",
-//     errors: errors.array(),
-//     user: req.user,
-//   });
-// };
-
-// exports.login_post = async (req, res, next) => {
-//   passport.authenticate(
-//     "login",
-//     { session: false },
-//     async (err, user, info) => {
-//       try {
-//         if (err || !user) {
-//           return res
-//             .status(401)
-//             .json({ message: "Invalid username or password" });
-//         }
-
-//         req.login(user, { session: false }, async (error) => {
-//           if (error) return next(error);
-
-//           const body = { _id: user._id, username: user.username };
-//           const token = jwt.sign({ user: body }, "parrot", {
-//             expiresIn: "1d",
-//           });
-
-//           res.send({ token: token });
-//         });
-//       } catch (error) {
-//         return next(error);
-//       }
-//     }
-//   )(req, res, next);
-// };
-
-// // LOG OUT
-// exports.logout = async (req, res, next) => {
-//   res.clearCookie("token");
-//   res.redirect("/");
-// };

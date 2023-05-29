@@ -60,7 +60,11 @@ router.get("/", function (req, res, next) {
 // POST CONTROLLER
 
 // read/get all posts - api/posts
-router.get("/posts", post_controller.post_list);
+router.get(
+  "/posts",
+  passport.authenticate("jwt", { session: false }),
+  post_controller.post_list
+);
 
 // create post - api/posts
 router.post("/posts", post_controller.post_create);
@@ -105,11 +109,8 @@ router.post("/sign-up", user_controller.signup);
 // login - api/login
 router.post("/login", user_controller.login);
 
+// TODO:
 // logout - api/logout
-router.get(
-  "/logout",
-  passport.authenticate("jwt", { session: false }),
-  user_controller.logout
-);
+router.get("/logout", user_controller.logout);
 
 module.exports = router;

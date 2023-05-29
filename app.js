@@ -48,7 +48,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Define the "login" strategy
+/// Define the "login" strategy
 passport.use(
   "login",
   new LocalStrategy(async (username, password, done) => {
@@ -71,21 +71,27 @@ passport.use(
   })
 );
 
-// HARD CODED TOKEN FOR TEST
-function getToken() {
-  return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0NmY3NGYzNzlhNTdhMzllMzBlM2UyZSIsInVzZXJuYW1lIjoiY2F0IiwicGFzc3dvcmQiOiJxcXEifSwiaWF0IjoxNjg1MjY3MzI0fQ.MUOesSXrknsz1fIqpjINBjS5YWJf_tInPGAT_pQGUmY";
-}
+// // HARD CODED TOKEN FOR TEST
+// function getToken() {
+//   return "aeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0NmY3NGYzNzlhNTdhMzllMzBlM2UyZSIsInVzZXJuYW1lIjoiY2F0IiwicGFzc3dvcmQiOiJxcXEifSwiaWF0IjoxNjg1MjY3MzI0fQ.MUOesSXrknsz1fIqpjINBjS5YWJf_tInPGAT_pQGUmY";
+// }
 
 passport.use(
   new JWTstrategy(
     {
       secretOrKey: "secret",
-      jwtFromRequest: getToken, // Test token
-      // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async (token, done) => {
       try {
-        return done(null, token.user);
+        const user = await User.findById(token.userId);
+
+        if (!user) {
+          // User not found in the database, token is invalid
+          return done(null, false);
+        }
+
+        return done(null, user);
       } catch (error) {
         done(error);
       }
