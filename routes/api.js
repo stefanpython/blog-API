@@ -38,7 +38,11 @@ router.get(
 );
 
 // update post - api/posts/:postid
-router.put("/posts/:id", post_controller.post_update);
+router.put(
+  "/posts/:id",
+  passport.authenticate("jwt", { session: false }),
+  post_controller.post_update
+);
 
 // delete post - api/posts/:postid
 router.delete("/posts/:id", post_controller.post_delete);

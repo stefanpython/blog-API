@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const Post = require("../models/post");
 const mongoose = require("mongoose");
 
@@ -16,26 +16,38 @@ exports.post_list = async (req, res) => {
 };
 
 // Create a new post
-exports.post_create = async (req, res) => {
-  try {
-    // Destructure title and content from req body
-    const { title, content } = req.body;
+exports.post_create = [
+  // Sanitize and validate inputs
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("content").trim().notEmpty().withMessage("Content is required"),
 
-    // Create a new post instance
-    const newPost = new Post({
-      title: title,
-      content: content,
-      author: req.user._id,
-    });
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-    // Save the new post to the database
-    const savedPost = await newPost.save();
-    res.json({ message: "Create post successfuly." });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Error in creating post" });
-  }
-};
+      // Destructure title and content from req body
+      const { title, content } = req.body;
+
+      // Create a new post instance
+      const newPost = new Post({
+        title: title,
+        content: content,
+        author: req.user._id,
+      });
+
+      // Save the new post to the database
+      const savedPost = await newPost.save();
+      res.json({ message: "Create post successfully." });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Error in creating post" });
+    }
+  },
+];
 
 // Get a single post
 exports.post_detail = async (req, res) => {
@@ -64,10 +76,41 @@ exports.post_detail = async (req, res) => {
 };
 
 // Update a post
-exports.post_update = (req, res) => {
-  // TODO: Implement logic to update a post
-  res.json({ message: "TODO UPDATE POST" });
-};
+exports.post_update = [
+  // Sanitize and validate inputs
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("content").trim().notEmpty().withMessage("Content is required"),
+
+  async (req, res) => {
+    try {
+      // Check for validation error
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      // Retrieve post id from params
+      const postId = req.params.id;
+
+      // Find the post by id
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Update the post with the new data
+      post.title = req.body.title;
+      post.content = req.body.content;
+
+      // Save the updated post to the database
+      const updatedPost = await post.save();
+      res.json({ message: "Post updated successfully" });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Error in updating post" });
+    }
+  },
+];
 
 // Delete a post
 exports.post_delete = (req, res) => {
