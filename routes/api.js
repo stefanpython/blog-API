@@ -48,14 +48,14 @@ router.delete(
 // create comment - api/posts/:postid/comments
 router.post("/posts/:postid/comments", comment_controller.comment_create);
 
+// read/get all comments - api/posts/:postid/comments
+router.get("/posts/:postid/comments", comment_controller.comment_list);
+
 // read/get single comment - api/posts/:postid/comments/:commentid
 router.get(
   "/posts/:postid/comments/:commentid",
   comment_controller.comment_detail
 );
-
-// read/get all comments - api/posts/:postid/comments
-router.get("/posts/:postid/comments", comment_controller.comment_list);
 
 // DELETE ALL POST COMMENTS
 router.delete("/posts/:postid/comments", comment_controller.comment_delete_all);

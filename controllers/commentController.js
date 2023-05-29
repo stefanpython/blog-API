@@ -41,7 +41,7 @@ exports.comment_detail = async (req, res) => {
     // Retrieve the comment ID from the request parameters
     const commentId = req.params.commentid;
 
-    // TODO: Implement logic to find the comment by ID
+    // Logic to find the comment by ID
     const comment = await Comment.findById(commentId);
 
     if (!comment) {
@@ -56,9 +56,28 @@ exports.comment_detail = async (req, res) => {
 };
 
 // Get all comments
-exports.comment_list = (req, res) => {
-  // TODO: Implement logic to get all comments
-  res.json({ message: "TODO LIST OF ALL COMMENTS" });
+exports.comment_list = async (req, res, next) => {
+  try {
+    const postId = req.params.postid;
+
+    // Check if the post ID is valid
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Find the comments with the specified postId
+    const comments = await Comment.find({ postId: postId });
+
+    if (!comments || comments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No comments found for the post" });
+    }
+
+    res.json({ comments });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Delete all comments of a post
