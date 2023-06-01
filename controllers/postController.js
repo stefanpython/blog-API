@@ -1,5 +1,6 @@
 const { body, validationResult } = require("express-validator");
 const Post = require("../models/post");
+const User = require("../models/user");
 const mongoose = require("mongoose");
 
 // Get all posts
@@ -32,11 +33,16 @@ exports.post_create = [
       // Destructure title and content from req body
       const { title, content } = req.body;
 
+      const postAuthor = await User.findById(req.user._id)
+        .populate("username")
+        .exec();
+
       // Create a new post instance
       const newPost = new Post({
         title: title,
         content: content,
         author: req.user._id,
+        authorName: postAuthor.username,
       });
 
       // Save the new post to the database
@@ -98,9 +104,14 @@ exports.post_update = [
         return res.status(404).json({ message: "Post not found" });
       }
 
+      const postAuthor = await User.findById(req.user._id)
+        .populate("username")
+        .exec();
+
       // Update the post with the new data
       post.title = req.body.title;
       post.content = req.body.content;
+      post.authorName = req.body.authorName;
 
       // Save the updated post to the database
       const updatedPost = await post.save();

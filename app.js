@@ -8,6 +8,7 @@ const cors = require("cors");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 // PASSPORT STUFF
 const passport = require("passport");
@@ -22,8 +23,7 @@ const User = require("./models/user");
 
 // Connect to MongoDB
 async function main() {
-  const mongoURI =
-    "mongodb+srv://dementia1349:test@cluster0.zw0djkv.mongodb.net/blog?retryWrites=true&w=majority";
+  const mongoURI = process.env.MONGODB_URI;
   await mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -71,15 +71,10 @@ passport.use(
   })
 );
 
-// // HARD CODED TOKEN FOR TEST
-// function getToken() {
-//   return "aeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0NmY3NGYzNzlhNTdhMzllMzBlM2UyZSIsInVzZXJuYW1lIjoiY2F0IiwicGFzc3dvcmQiOiJxcXEifSwiaWF0IjoxNjg1MjY3MzI0fQ.MUOesSXrknsz1fIqpjINBjS5YWJf_tInPGAT_pQGUmY";
-// }
-
 passport.use(
   new JWTstrategy(
     {
-      secretOrKey: "secret",
+      secretOrKey: process.env.SECRET,
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async (token, done) => {

@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+require("dotenv").config();
 
 // Create a new user
 exports.signup = async (req, res) => {
@@ -51,7 +52,9 @@ exports.login = async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ userId: user.id }, "secret", { expiresIn: "2h" });
+    const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
+      expiresIn: "2h",
+    });
     res.json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -60,5 +63,6 @@ exports.login = async (req, res) => {
 
 /// User logout
 exports.logout = (req, res, next) => {
+  // Logout is implemented on the FrontEnd
   res.json({ message: "Logout successful" });
 };

@@ -79,7 +79,6 @@ router.post("/sign-up", user_controller.signup);
 // login - api/login
 router.post("/login", user_controller.login);
 
-// TODO:
 // logout - api/logout
 router.get("/logout", user_controller.logout);
 
