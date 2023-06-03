@@ -4,8 +4,6 @@ const passport = require("passport");
 const user_controller = require("../controllers/userController");
 const post_controller = require("../controllers/postController");
 const comment_controller = require("../controllers/commentController");
-const User = require("../models/user");
-const jwt = require("jsonwebtoken");
 
 ///////////////// ROUTES /////////////////////////
 
