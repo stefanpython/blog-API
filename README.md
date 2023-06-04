@@ -1,6 +1,7 @@
 # blog-API
 
 Blog admin interface [here](https://github.com/stefanpython/blog-admin-api)
+
 Blog user interface [here](https://github.com/stefanpython/blog-user-api)
 
 This is a RESTful API for a blog application. It provides endpoints for managing users, posts, and comments.
